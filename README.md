@@ -1,3 +1,10 @@
+This is a fork of the original flutter_google_map_view in which i fixed the build gradle for Android SDK 28. It works at last for me
+
+
+
+
+
+
 # IMPORTANT: This plugin is no longer under development
 ### Why?
 
