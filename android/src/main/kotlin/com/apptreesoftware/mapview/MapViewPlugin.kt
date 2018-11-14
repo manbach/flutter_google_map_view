@@ -19,7 +19,6 @@ import io.flutter.plugin.common.PluginRegistry.Registrar
 /*
 Every time i reformatted the code, this imports were removed so i put them here
 for easier access.
-
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
@@ -48,7 +47,6 @@ class MapViewPlugin(val activity: Activity) : MethodCallHandler {
         val REQUEST_GOOGLE_PLAY_SERVICES = 1000
         var mapViewType: Int = GoogleMap.MAP_TYPE_NORMAL
         lateinit var registrar: Registrar
-
         @JvmStatic
         fun registerWith(registrar: Registrar): Unit {
             channel = MethodChannel(registrar.messenger(), "com.apptreesoftware.map_view")
@@ -56,45 +54,37 @@ class MapViewPlugin(val activity: Activity) : MethodCallHandler {
             channel.setMethodCallHandler(plugin)
             this.registrar = registrar
         }
-
         fun handleToolbarAction(id: Int) {
             channel.invokeMethod("onToolbarAction", id)
         }
-
         fun onMapReady() {
             channel.invokeMethod("onMapReady", null)
         }
-
         fun getToolbarActions(actionsList: List<Map<String, Any>>?): List<ToolbarAction> {
             if (actionsList == null) return emptyList()
             val actions = ArrayList<ToolbarAction>()
             actionsList.mapTo(actions) { ToolbarAction(it) }
             return actions
         }
-
         fun getCameraPosition(map: Map<String, Any>): CameraPosition {
             val latitude = map["latitude"] as Double
             val longitude = map["longitude"] as Double
             val zoom = map["zoom"] as Double
             return CameraPosition(LatLng(latitude, longitude), zoom.toFloat(), 0.0f, 0.0f)
         }
-
         fun mapTapped(latLng: LatLng) {
             this.channel.invokeMethod("mapTapped",
                     mapOf("latitude" to latLng.latitude,
                             "longitude" to latLng.longitude))
         }
-
         fun mapLongTapped(latLng: LatLng) {
             this.channel.invokeMethod("mapLongTapped",
                     mapOf("latitude" to latLng.latitude,
                             "longitude" to latLng.longitude))
         }
-
         fun annotationTapped(id: String) {
             this.channel.invokeMethod("annotationTapped", id)
         }
-
         fun annotationDragStart(id: String, latLng: LatLng) {
             this.channel.invokeMethod("annotationDragStart", mapOf(
                     "id" to id,
@@ -102,7 +92,6 @@ class MapViewPlugin(val activity: Activity) : MethodCallHandler {
                     "longitude" to latLng.longitude
             ))
         }
-
         fun annotationDragEnd(id: String, latLng: LatLng) {
             this.channel.invokeMethod("annotationDragEnd", mapOf(
                     "id" to id,
@@ -110,7 +99,6 @@ class MapViewPlugin(val activity: Activity) : MethodCallHandler {
                     "longitude" to latLng.longitude
             ))
         }
-
         fun annotationDrag(id: String, latLng: LatLng) {
             this.channel.invokeMethod("annotationDrag", mapOf(
                     "id" to id,
@@ -118,15 +106,12 @@ class MapViewPlugin(val activity: Activity) : MethodCallHandler {
                     "longitude" to latLng.longitude
             ))
         }
-
         fun polylineTapped(id: String) {
             this.channel.invokeMethod("polylineTapped", id)
         }
-
         fun polygonTapped(id: String) {
             this.channel.invokeMethod("polygonTapped", id)
         }
-
         fun cameraPositionChanged(pos: CameraPosition) {
             this.channel.invokeMethod("cameraPositionChanged", mapOf(
                     "latitude" to pos.target.latitude,
@@ -136,7 +121,6 @@ class MapViewPlugin(val activity: Activity) : MethodCallHandler {
                     "tilt" to pos.tilt
             ))
         }
-
         fun locationDidUpdate(loc: Location) {
             var verticalAccuracy = 0.0f
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
@@ -152,17 +136,14 @@ class MapViewPlugin(val activity: Activity) : MethodCallHandler {
                     "verticalAccuracy" to verticalAccuracy
             ))
         }
-
         fun infoWindowTapped(id: String) {
             this.channel.invokeMethod("infoWindowTapped", id)
         }
-
         fun getAssetFileDecriptor(asset: String): AssetFileDescriptor {
             val assetManager = registrar.context().getAssets()
             val key = registrar.lookupKeyForAsset(asset)
             return assetManager.openFd(key)
         }
-
         fun indoorBuildingActivated(indoorBuilding: IndoorBuilding?) {
             if (indoorBuilding == null) {
                 this.channel.invokeMethod("indoorBuildingActivated", null)
@@ -173,7 +154,6 @@ class MapViewPlugin(val activity: Activity) : MethodCallHandler {
                         "levels" to mappingIndoorLevels(indoorBuilding.levels)))
             }
         }
-
         fun indoorLevelActivated(level: IndoorLevel?) {
             if (level == null) {
                 this.channel.invokeMethod("indoorLevelActivated", null)
@@ -181,13 +161,11 @@ class MapViewPlugin(val activity: Activity) : MethodCallHandler {
                 this.channel.invokeMethod("indoorLevelActivated", mappingIndoorLevel(level))
             }
         }
-
         private fun mappingIndoorLevels(levels: List<IndoorLevel>): List<Map<String, Any>> {
             val list = mutableListOf<Map<String, Any>>()
             levels.forEach { level -> list.add(mappingIndoorLevel(level)) }
             return list
         }
-
         private fun mappingIndoorLevel(level: IndoorLevel): Map<String, Any> {
             return mapOf(
                     "name" to level.name,
@@ -195,7 +173,6 @@ class MapViewPlugin(val activity: Activity) : MethodCallHandler {
             )
         }
     }
-
     override fun onMethodCall(call: MethodCall, result: Result): Unit {
         when {
             call.method == "setApiKey" -> result.success(false)
@@ -205,20 +182,18 @@ class MapViewPlugin(val activity: Activity) : MethodCallHandler {
                     return
                 }
                 val mapOptions = call.argument<Map<String, Any>>("mapOptions")
-                val cameraDict = mapOptions?["cameraPosition"] as Map<String, Any>
+                val cameraDict = mapOptions["cameraPosition"] as Map<String, Any>
                 initialCameraPosition = getCameraPosition(cameraDict)
                 toolbarActions = getToolbarActions(call.argument<List<Map<String, Any>>>("actions"))
-                showUserLocation = mapOptions?["showUserLocation"] as Boolean
-                showMyLocationButton = mapOptions?["showMyLocationButton"] as Boolean
-                showCompassButton = mapOptions?["showCompassButton"] as Boolean
-                hideToolbar = mapOptions?["hideToolbar"] as Boolean
-                mapTitle = mapOptions?["title"] as String
-
+                showUserLocation = mapOptions["showUserLocation"] as Boolean
+                showMyLocationButton = mapOptions["showMyLocationButton"] as Boolean
+                showCompassButton = mapOptions["showCompassButton"] as Boolean
+                hideToolbar = mapOptions["hideToolbar"] as Boolean
+                mapTitle = mapOptions["title"] as String
                 if (mapOptions["mapViewType"] != null) {
-                    val mappedMapType = mapTypeMapping?.get(mapOptions["mapViewType"]);
+                    val mappedMapType: Int? = mapTypeMapping.get(mapOptions["mapViewType"]);
                     if (mappedMapType != null) mapViewType = mappedMapType;
                 }
-
                 val intent = Intent(activity, MapActivity::class.java)
                 activity.startActivity(intent)
                 result.success(true)
@@ -315,7 +290,6 @@ class MapViewPlugin(val activity: Activity) : MethodCallHandler {
             else -> result.notImplemented()
         }
     }
-
     fun handleSetCamera(map: Map<String, Any>) {
         val lat = map["latitude"] as Double
         val lng = map["longitude"] as Double
@@ -324,25 +298,21 @@ class MapViewPlugin(val activity: Activity) : MethodCallHandler {
         val tilt = map["tilt"] as Double
         mapActivity?.setCamera(LatLng(lat, lng), zoom.toFloat(), bearing.toFloat(), tilt.toFloat())
     }
-
     fun handleZoomToAnnotations(map: Map<String, Any>) {
         val ids = map["annotations"] as List<String>
         val padding = map["padding"] as Double
         mapActivity?.zoomToAnnotations(ids, padding.toFloat())
     }
-
     fun handleZoomToPolylines(map: Map<String, Any>) {
         val ids = map["polylines"] as List<String>
         val padding = map["padding"] as Double
         mapActivity?.zoomToPolylines(ids, padding.toFloat())
     }
-
     fun handleZoomToPolygons(map: Map<String, Any>) {
         val ids = map["polygons"] as List<String>
         val padding = map["padding"] as Double
         mapActivity?.zoomToPolygons(ids, padding.toFloat())
     }
-
     fun handleSetAnnotations(annotations: List<Map<String, Any>>) {
         val mapAnnoations = ArrayList<MapAnnotation>()
         for (a in annotations) {
@@ -353,19 +323,16 @@ class MapViewPlugin(val activity: Activity) : MethodCallHandler {
         }
         mapActivity?.setAnnotations(mapAnnoations)
     }
-
     fun handleAddAnnotation(map: Map<String, Any>) {
         MapAnnotation.fromMap(map)?.let {
             mapActivity?.addMarker(it)
         }
     }
-
     fun handleRemoveAnnotation(map: Map<String, Any>) {
         MapAnnotation.fromMap(map)?.let {
             mapActivity?.removeMarker(it)
         }
     }
-
     fun handleSetPolylines(polylines: List<Map<String, Any>>) {
         val mapPolylines = ArrayList<MapPolyline>()
         for (a in polylines) {
@@ -376,19 +343,16 @@ class MapViewPlugin(val activity: Activity) : MethodCallHandler {
         }
         mapActivity?.setPolylines(mapPolylines)
     }
-
     fun handleAddPolyline(map: Map<String, Any>) {
         MapPolyline.fromMap(map)?.let {
             mapActivity?.addPolyline(it)
         }
     }
-
     fun handleRemovePolyline(map: Map<String, Any>) {
         MapPolyline.fromMap(map)?.let {
             mapActivity?.removePolyline(it)
         }
     }
-
     fun handleSetPolygons(polygons: List<Map<String, Any>>) {
         val mapPolygons = ArrayList<MapPolygon>()
         for (a in polygons) {
@@ -399,17 +363,14 @@ class MapViewPlugin(val activity: Activity) : MethodCallHandler {
         }
         mapActivity?.setPolygons(mapPolygons)
     }
-
     fun handleAddPolygon(map: Map<String, Any>) {
         MapPolygon.fromMap(map)?.let {
             mapActivity?.addPolygon(it)
         }
     }
-
     fun handleRemovePolygon(map: Map<String, Any>) {
         MapPolygon.fromMap(map)?.let {
             mapActivity?.removePolygon(it)
         }
     }
 }
-
